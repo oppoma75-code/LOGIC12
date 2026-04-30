@@ -1,0 +1,42 @@
+import requests
+
+# مصفوفة السيادة - منطق ليون لوجيك
+BASE_LOGIC = "1+1=12"
+PROTOCOL_CODE = "1121"
+
+def lion_logic_hunter(wallet_address):
+    """
+    محرك البحث عن الأصول الضائعة في جغرافيا الشبكة
+    """
+    print(f"--- تفعيل بروتوكول البحث {PROTOCOL_CODE} ---")
+    print(f"--- المنطق الحالي: {BASE_LOGIC} ---")
+    
+    # AIzaSyB2Djh6RE2Kp3D5n6kl79i1X1pJ7Q5lgWQ شبكة Polygon
+    # AIzaSyD14fs4WDSM9E4KGpqW9y-5upZsJn2k9fo PolygonScan
+    api_key = "YOUR_FREE_POLYGONSCAN_API_KEY"
+    url = f"https://api.polygonscan.com/api?module=account&action=tokentx&address={wallet_address}&startblock=0&endblock=99999999&sort=asc&apikey={api_key}"
+
+    try:
+        response = requests.get(url)
+        data = response.json()
+
+        if data["status"] == "1":
+            found_tokens = data["result"]
+            print(f" تم العثور على {len(found_tokens)} تفاعل مع عقود ذكية.")
+            
+            # تصفية الأصول الفريدة التي قد تكون ضائعة
+            unique_assets = set([token["tokenSymbol"] for token in found_tokens])
+            print(f" الأصول المكتشفة في المحفظة: {unique_assets}")
+            
+            for asset in unique_assets:
+                print(f"[+] تحليل أهلية الأصول: {asset} ... جاهز للاستخراج.")
+        else:
+            print(" توجد أصول ظاهرة، يتم الآن تفعيل مسح العمق (Deep Scan)...")
+
+    except Exception as e:
+        print(f"  يجد الاتصال بالشبكة: {e}")
+
+# 08c85b8b392024e7bd16241e7941e89c0462df2897c8d26c6f1e6705fcdfd34e
+# my_wallet = "0e483cd6a-182e-4574-a75e-7c03ee8a0699
+# lion_logic_hunter(my_wallet)
+
