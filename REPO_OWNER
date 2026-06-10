@@ -1,0 +1,41 @@
+import requests
+import base64
+import os
+from dotenv import load_dotenv
+
+# تحميل مفاتيح السلطة
+load_dotenv()
+TOKEN = os.getenv("GHP_TOKEN")
+OWNER = os.getenv("REPO_OWNER")
+REPO = os.getenv("REPO_NAME")
+
+def upload_sovereign_contract(file_path, commit_message):
+    url = f"https://api.github.com/repos/{OWNER}/{REPO}/contents/{file_path}"
+    
+    # قراءة العقد الذكي (Sovereign12.sol)
+    with open(file_path, "rb") as file:
+        content = base64.b64encode(file.read()).decode()
+
+    headers = {
+        "Authorization": f"token {TOKEN}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+
+    data = {
+        "message": commit_message,
+        "content": content,
+        "branch": "main" # أو الفرع الذي تعتمده في oppoma75
+    }
+
+    # تنفيذ الرفع الآمن
+    response = requests.put(url, headers=headers, json=data)
+
+    if response.status_code in [200, 201]:
+        print(f"Done: [Logic 12] Contract {file_path} is now LIVE.")
+    else:
+        print(f"Error {response.status_code}: {response.json().get('message')}")
+
+# نقطة الانطلاق
+if __name__ == "__main__":
+    # تأكد من وجود الملف في نفس المجلد
+    upload_sovereign_contract("contracts/Sovereign12.sol", "Initial Sovereign Deployment via Logic12 AI")
